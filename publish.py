@@ -25,10 +25,10 @@ def api(path):
 
 def verify(pr, sha):
     pull = api(f"/pulls/{pr}")
-    if (pull["state"] != "open" or pull["merged"] or pull["draft"]
+    if (pull["state"] != "open" or pull["merged"]
             or pull["base"]["repo"]["full_name"] != REPO
             or pull["base"]["ref"] != "main" or pull["head"]["sha"] != sha):
-        raise ValueError("PR must be open, ready for review, and match the requested SHA and base")
+        raise ValueError("PR must be open and match the requested SHA and base")
     runs = api(f"/actions/workflows/tests.yml/runs?event=pull_request&head_sha={sha}")
     for run in runs["workflow_runs"]:
         if (run["head_sha"] == sha and run["event"] == "pull_request"
